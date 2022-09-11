@@ -1,0 +1,6 @@
+{
+    "name": "Elvia",
+    "domains": ["elvia"],
+    "iot_class": ["Local Polling"],
+    "render_readme": true
+  }
