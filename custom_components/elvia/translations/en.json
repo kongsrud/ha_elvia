@@ -1,0 +1,26 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Device is already configured"
+        },
+        "error": {
+            "cannot_connect": "Failed to connect",
+            "forbidden_call": "You are not autheroized to obtain data",
+            "invalid_auth": "Invalid authentication",
+            "unknown": "Unexpected error",
+            "timeout": "Elvia timed out"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "access_token": "Access Token",
+                    "include_production_to_grid": "Production (solar or other) to grid",
+                    "meter_id": "Meter id",
+                    "max_hours": "Max hours",
+                    "meter_reading": "Meter reading",
+                    "grid_cost_period": "Grid usage cost Kwh"
+                }
+            }
+        }
+    }
+}

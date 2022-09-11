@@ -1,0 +1,26 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "access_token": "[%key:common::config_flow::data::access_token%]",
+          "meter_id": "Meter id",
+          "include_production_to_grid": "Production (solar or other) to grid",
+          "max_hours": "Max hours",
+          "meter_reading": "Meter reading",
+          "grid_cost_period": "Grid usage cost Kwh"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+      "forbidden_call": "You are not autheroized to obtain data",
+      "unknown": "[%key:common::config_flow::error::unknown%]",
+      "timeout": "Connection timed out"
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+    }
+  }
+}
