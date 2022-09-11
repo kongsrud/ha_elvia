@@ -1,11 +1,11 @@
 {
   "domain": "elvia",
   "name": "elvia",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "config_flow": true,
   "documentation": "https://www.home-assistant.io/integrations/elvia",
   "requirements": [
-    "pyElvia==0.0.1"
+    "pyElvia==0.0.2"
   ],
   "codeowners": ["@bskjon"],
   "iot_class": "local_polling"
