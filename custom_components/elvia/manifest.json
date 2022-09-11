@@ -1,6 +1,7 @@
 {
   "domain": "elvia",
   "name": "elvia",
+  "version": "0.5",
   "config_flow": true,
   "documentation": "https://www.home-assistant.io/integrations/elvia",
   "requirements": [
@@ -9,10 +10,6 @@
     "asyncio==3.4.3",
     "urllib3==1.26.12"
   ],
-  "ssdp": [],
-  "zeroconf": [],
-  "homekit": {},
-  "dependencies": [],
   "codeowners": ["@bskjon"],
   "iot_class": "local_polling"
 }
