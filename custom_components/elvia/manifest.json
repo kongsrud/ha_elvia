@@ -1,11 +1,11 @@
 {
   "domain": "elvia",
   "name": "elvia",
-  "version": "0.5",
+  "version": "0.5.2",
   "config_flow": true,
   "documentation": "https://www.home-assistant.io/integrations/elvia",
   "requirements": [
-    "Pykson==0.9.9.8.7",
+    "pykson==0.9.9.8.7",
     "aiohttp==3.8.1",
     "asyncio==3.4.3",
     "urllib3==1.26.12"
