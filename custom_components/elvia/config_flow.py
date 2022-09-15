@@ -22,7 +22,7 @@ from .const import (
     METER_READING,
     TOKEN,
 )
-from .elvia import ElviaApi
+from elvia.elvia import ElviaApi
 
 _LOGGER = logging.getLogger(__name__)
 

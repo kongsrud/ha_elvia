@@ -24,8 +24,8 @@ from homeassistant.helpers.update_coordinator import (
 from homeassistant.util import dt as dt_util
 
 from .const import COST_PERIOD, DOMAIN, MAX_HOURS, METER, METER_READING, TOKEN
-from .elvia import CostTimeSpan, Elvia, ElviaApi, Meter
-from .elvia_schema import (
+from elvia.elvia import CostTimeSpan, Elvia, ElviaApi, Meter
+from elvia.elvia_schema import (
     MaxHours,
     MeterValues,
     maxHour,

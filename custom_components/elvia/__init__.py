@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 
 from .const import COST_PERIOD, MAX_HOURS, METER, METER_READING, TOKEN
-from .elvia import ElviaApi
+from elvia.elvia import ElviaApi
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
 
