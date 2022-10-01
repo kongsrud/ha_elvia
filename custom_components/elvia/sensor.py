@@ -71,6 +71,14 @@ async def async_setup_entry(
         entities.append(ElviaEnergyFixedLinkSensor("Grid Cost Period"))
 
     meter: Meter = hass.data[METER]
+
+    if meter_reading:
+        for meter_id in meter.meter_ids:
+            entities.append(
+                ElviaMeterReadingLevelSensor(
+                    coordinator, "Meter Reading", meter_id)
+            )
+
     if max_hours and meter is not None:
         entities.extend(
             await async_create_max_hours(
