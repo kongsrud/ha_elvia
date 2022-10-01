@@ -332,17 +332,23 @@ class ElviaFixedGridLevelSensor(ElviaMeterSensor):
         if max_hours is None:
             return
         max_hours_current = elvia.extract_max_hours_current(max_hours)
-        if max_hours_current is None:
-            return
-
-        self._attr_native_value = elvia.get_grid_level(
-            max_hours_current.averageValue
-        )  # Nettleie nivå her
-        self._attr_extra_state_attributes = {
-            "start_time": max_hours.maxHoursFromTime,
-            "end_time": max_hours.maxHoursToTime,
-            "calculated_time": max_hours.maxHoursCalculatedTime,
-        }
+        if len(max_hours_current.maxHours) == 0:
+            now = datetime.now()
+            self._attr_native_value = elvia.get_grid_level(0)
+            self._attr_extra_state_attributes = {
+                "start_time": now.isoformat(),
+                "end_time": (now + timedelta(hours=1)).isoformat(),
+                "calculated_time": now.isoformat(),
+            }
+        else:
+            self._attr_native_value = elvia.get_grid_level(
+                max_hours_current.averageValue
+            )
+            self._attr_extra_state_attributes = {
+                "start_time": max_hours.maxHoursFromTime,
+                "end_time": max_hours.maxHoursToTime,
+                "calculated_time": max_hours.maxHoursCalculatedTime,
+            }
 
         return super()._handle_coordinator_update()
 
@@ -387,17 +393,24 @@ class ElviaMaxHourFixedLevelSensor(ElviaMeterSensor):
             return
 
         max_hours_current = Elvia().extract_max_hours_current(max_hours)
-        if max_hours_current is None:
-            return
-
-        self._attr_native_value = round(
-            max_hours_current.averageValue, 2
-        )  # Nettleie nivå her
-        self._attr_extra_state_attributes = {
-            "start_time": max_hours.maxHoursFromTime,
-            "end_time": max_hours.maxHoursToTime,
-            "calculated_time": max_hours.maxHoursCalculatedTime,
-        }
+        
+        if len(max_hours_current.maxHours) == 0:
+            now = datetime.now()
+            self._attr_native_value = 0.00
+            self._attr_extra_state_attributes = {
+                "start_time": now.isoformat(),
+                "end_time": (now + timedelta(hours=1)).isoformat(),
+                "calculated_time": now.isoformat(),
+            }
+        else:
+            self._attr_native_value = round(
+                max_hours_current.averageValue, 2
+            )  # Nettleie nivå her
+            self._attr_extra_state_attributes = {
+                "start_time": max_hours.maxHoursFromTime,
+                "end_time": max_hours.maxHoursToTime,
+                "calculated_time": max_hours.maxHoursCalculatedTime,
+            }
 
         return super()._handle_coordinator_update()
 
@@ -452,14 +465,21 @@ class ElviaMaxHourPeakSensor(ElviaMeterSensor):
             max_hours_current is None
             or len(max_hours_current.maxHours) < self.peak_index
         ):
+            now = datetime.now()
+            self._attr_native_value = 0.00
+            self._attr_extra_state_attributes = {
+                "start_time": now.isoformat(),
+                "end_time": (now + timedelta(hours=1)).isoformat(),
+            }
             return
-        peak_hour = max_hours_current.maxHours[self.peak_index]
+        else: 
+            peak_hour = max_hours_current.maxHours[self.peak_index]
 
-        self._attr_native_value = round(peak_hour.value, 2)
-        self._attr_extra_state_attributes = {
-            "start_time": max_hours.maxHoursFromTime,
-            "end_time": max_hours.maxHoursToTime,
-        }
+            self._attr_native_value = round(peak_hour.value, 2)
+            self._attr_extra_state_attributes = {
+                "start_time": max_hours.maxHoursFromTime,
+                "end_time": max_hours.maxHoursToTime,
+            }
 
         return super()._handle_coordinator_update()
 
