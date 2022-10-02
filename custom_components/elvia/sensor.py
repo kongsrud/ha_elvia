@@ -479,7 +479,6 @@ class ElviaMeterReadingLevelSensor(ElviaMeterSensor):
         _LOGGER.debug("Accumulative consumption of {} for {} hours ({})".format(
             _accumulated_consumption_today, len(_hourly_consumption), _hourly_consumption))
 
-        # Consider looking into restoring value after restart
         _updated_value = round(_accumulated_consumption_today, 2)
         if (_updated_value != self._attr_native_value):
             if (self._attr_native_value is not None and _updated_value < self._attr_native_value):
@@ -489,8 +488,8 @@ class ElviaMeterReadingLevelSensor(ElviaMeterSensor):
                 self.async_write_ha_state()
             self._attr_native_value = _updated_value
             self._attr_extra_state_attributes = {
-                "from": _time_series[0].startTime if len(_time_series) > 0 else _meter_values.fromHour,
-                "to": _time_series[-1].endTime if len(_time_series) > 0 else _meter_values.fromHour,
+                "start_time": _time_series[0].startTime if len(_time_series) > 0 else _meter_values.fromHour,
+                "end_time": _time_series[-1].endTime if len(_time_series) > 0 else _meter_values.fromHour,
                 "hourly_consumption": list(map(lambda value: round(value, 2), _hourly_consumption))
             }
 
