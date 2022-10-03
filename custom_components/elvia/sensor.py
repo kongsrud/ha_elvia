@@ -71,6 +71,14 @@ async def async_setup_entry(
         entities.append(ElviaEnergyFixedLinkSensor("Grid Cost Period"))
 
     meter: Meter = hass.data[METER]
+
+    if meter_reading:
+        for meter_id in meter.meter_ids:
+            entities.append(
+                ElviaMeterReadingLevelSensor(
+                    coordinator, "Meter Reading", meter_id)
+            )
+
     if max_hours and meter is not None:
         entities.extend(
             await async_create_max_hours(
@@ -418,6 +426,79 @@ class ElviaMaxHourFixedLevelSensor(ElviaMeterSensor):
     def icon(self) -> str:
         """Icon of the entity."""
         return "mdi:transmission-tower"
+
+
+class ElviaMeterReadingLevelSensor(ElviaMeterSensor):
+    """Sensor for meter reading."""
+
+    def __init__(
+        self,
+        coordinator: ElviaCoordinator,
+        name: str,
+        meter_id: str,
+    ) -> None:
+        """Class init. Default assignment."""
+
+        super().__init__(coordinator, name=name, meter_id=meter_id)
+
+        self._attr_device_class = SensorDeviceClass.ENERGY
+        self._attr_state_class = SensorStateClass.TOTAL_INCREASING
+        self._attr_native_unit_of_measurement = ENERGY_KILO_WATT_HOUR
+
+        self._attr_extra_state_attributes = {
+            "start_time": None,
+            "end_time": None,
+        }
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle update from elvia."""
+
+        _LOGGER.info("Updating Elvia Meter Reading")
+
+        _meter_id = self.meter_id_from_unique_id()
+        if _meter_id is None:
+            return
+
+        _meter_readings = self.get_meter_readings()
+        if _meter_readings is None:
+            return
+
+        # Select meter reading matching meter ID
+        _meter_values = list(filter(lambda meter: meter.meteringPointId ==
+                             _meter_id, _meter_readings.meteringpoints))[0].meterValue
+        _LOGGER.debug("Hourly consumption from {} to {}".format(
+            _meter_values.fromHour, _meter_values.toHour))
+
+        # Sort hours chronological
+        _time_series = sorted(_meter_values.timeSeries,
+                              key=lambda series: series.startTime)
+        _hourly_consumption = list(
+            map(lambda series: series.value,  _time_series))
+        _accumulated_consumption_today = sum(_hourly_consumption)
+        _LOGGER.debug("Accumulative consumption of {} for {} hours ({})".format(
+            _accumulated_consumption_today, len(_hourly_consumption), _hourly_consumption))
+
+        _updated_value = round(_accumulated_consumption_today, 2)
+        if (_updated_value != self._attr_native_value):
+            if (self._attr_native_value is not None and _updated_value < self._attr_native_value):
+                _LOGGER.info(
+                    "Resetting meter sensor to 0 kWh before first entry in new period")
+                self._attr_native_value = 0
+                self.async_write_ha_state()
+            self._attr_native_value = _updated_value
+            self._attr_extra_state_attributes = {
+                "start_time": _time_series[0].startTime if len(_time_series) > 0 else _meter_values.fromHour,
+                "end_time": _time_series[-1].endTime if len(_time_series) > 0 else _meter_values.fromHour,
+                "hourly_consumption": list(map(lambda value: round(value, 2), _hourly_consumption))
+            }
+
+        return super()._handle_coordinator_update()
+
+    @property
+    def icon(self) -> str:
+        """Icon of the entity."""
+        return "mdi:gauge"
 
 
 class ElviaMaxHourPeakSensor(ElviaMeterSensor):
