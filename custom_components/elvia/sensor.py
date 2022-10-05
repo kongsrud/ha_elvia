@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, time
 import logging
 
 from homeassistant.components.sensor import (
@@ -173,12 +173,21 @@ class ElviaCoordinator(DataUpdateCoordinator):
 
     async def async_elvia_pull(self) -> None:
         """Fetch relevant data from elvia."""
+
+        _today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        _yesterday = _today - timedelta(hours=24)
+        _current_time = datetime.now().time()
+
         if self.config_pull_max_hours:
             result = await self.elvia_api.get_max_hours()
             if isinstance(result.data, MaxHours):
                 self.data_max_hours = result.data
         if self.config_pull_meter_reading:
-            result = await self.elvia_api.get_meter_values()
+            _reset_time = time(1, 30)
+            _period_start = _yesterday if _current_time < _reset_time else _today
+            _period_end = _period_start + timedelta(hours=24)
+
+            result = await self.elvia_api.get_meter_values(start_time=_period_start, end_time=_period_end)
             if isinstance(result.data, MeterValues):
                 self.data_meter_reading = result.data
 
