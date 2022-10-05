@@ -3,13 +3,14 @@
   "name": "elvia",
   "version": "0.5.7-beta",
   "config_flow": true,
-  "documentation": "https://www.home-assistant.io/integrations/elvia",
-  "requirements": ["pyElvia>=0.0.8"],
+  "documentation": "https://github.com/bskjon/ha_elvia",
+  "issue_tracker": "https://github.com/bskjon/ha_elvia/issues",
+  "requirements": ["pyElvia>=0.0.9"],
 
   "ssdp": [],
   "zeroconf": [],
   "homekit": {},
   "dependencies": [],
   "codeowners": ["@bskjon"],
-  "iot_class": "local_polling"
+  "iot_class": "cloud_polling"
 }
