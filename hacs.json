@@ -1,6 +1,6 @@
 {
     "name": "elvia",
     "domains": ["elvia"],
-    "iot_class": ["Local Polling"],
+    "iot_class": ["Cloud Polling"],
     "render_readme": true
   }
