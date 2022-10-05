@@ -479,6 +479,18 @@ class ElviaMeterReadingLevelSensor(ElviaMeterSensor):
         _LOGGER.debug("Hourly consumption from {} to {}".format(
             _meter_values.fromHour, _meter_values.toHour))
 
+        # Guard for empty responses on a date with previous data
+        if (len(_meter_values.timeSeries) == 0 and (self._attr_native_value is not None and self._attr_native_value > 0.0)):
+            _response_date = datetime.fromisoformat(_meter_values.fromHour).replace(
+                hour=0, minute=0, second=0, microsecond=0)
+            _recorded_date = datetime.fromisoformat(self._attr_extra_state_attributes.get("start_time")).replace(
+                hour=0, minute=0, second=0, microsecond=0) 
+            _LOGGER.debug("Empty response detected for {:%Y-%m-%d}. Records exists for {:%Y-%m-%d}".format(_response_date, _recorded_date))
+            if (_response_date == _recorded_date):
+                _LOGGER.warning(
+                    "Ignoring empty response for day with previous data")
+                return
+
         # Sort hours chronological
         _time_series = sorted(_meter_values.timeSeries,
                               key=lambda series: series.startTime)
