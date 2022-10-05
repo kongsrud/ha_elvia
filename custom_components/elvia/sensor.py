@@ -497,8 +497,13 @@ class ElviaMeterReadingLevelSensor(ElviaMeterSensor):
         _hourly_consumption = list(
             map(lambda series: series.value,  _time_series))
         _accumulated_consumption_today = sum(_hourly_consumption)
-        _LOGGER.debug("Accumulative consumption of {} for {} hours ({})".format(
+        _LOGGER.debug("Accumulative consumption of {:.2f} kWh for {} hours ({})".format(
             _accumulated_consumption_today, len(_hourly_consumption), _hourly_consumption))
+        
+        _current_time = datetime.now().time()
+        if (_current_time.minute > 55):
+            _LOGGER.debug("Ignoring response late in hour")
+            return
 
         _updated_value = round(_accumulated_consumption_today, 2)
         if (_updated_value != self._attr_native_value):
@@ -507,6 +512,7 @@ class ElviaMeterReadingLevelSensor(ElviaMeterSensor):
                     "Resetting meter sensor to 0 kWh before first entry in new period")
                 self._attr_native_value = 0
                 self.async_write_ha_state()
+            _LOGGER.debug("Updating sensor")
             self._attr_native_value = _updated_value
             self._attr_extra_state_attributes = {
                 "start_time": _time_series[0].startTime if len(_time_series) > 0 else _meter_values.fromHour,
