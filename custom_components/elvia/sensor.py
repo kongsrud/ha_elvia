@@ -606,7 +606,7 @@ class ElviaEnergyFixedLinkSensor(ElviaValueSensor):
 
         self._attr_state_class = SensorStateClass.TOTAL
         self._attr_device_class = SensorDeviceClass.MONETARY
-        self._attr_native_unit_of_measurement = "NOK"
+        self._attr_native_unit_of_measurement = "NOK/kWh"
 
         self._attr_extra_state_attributes = {
             "start_time": None,
@@ -620,7 +620,7 @@ class ElviaEnergyFixedLinkSensor(ElviaValueSensor):
         if period is None:
             return
 
-        self._attr_native_value = period.cost
+        self._attr_native_value = period.cost / 100.0
 
         periods = elvia.get_cost_periods()
         day_period: CostTimeSpan = periods["day"]
