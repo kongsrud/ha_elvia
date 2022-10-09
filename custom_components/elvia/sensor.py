@@ -501,7 +501,7 @@ class ElviaMeterReadingLevelSensor(ElviaMeterSensor):
             _accumulated_consumption_today, len(_hourly_consumption), _hourly_consumption))
         
         _current_time = datetime.now().time()
-        if (_current_time.minute > 55):
+        if (_current_time.minute > 50):
             _LOGGER.debug("Ignoring response late in hour")
             return
 
